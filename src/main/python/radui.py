@@ -136,8 +136,12 @@ class RadUIForm(QMainWindow):
     def init_fit_frame(self):
         f = QWidget()
 
-        f.r_label = QLineEdit()
-        f.r_label.setText("1")
+        f.r_label = QDoubleSpinBox()
+        f.r_label.setMinimum(0)
+        f.r_label.setMaximum(1)
+        f.r_label.setSingleStep(0.01)
+        f.r_label.setDecimals(3)
+        f.r_label.setValue(1)
         f.fit_button = QPushButton("拟合")
         f.fit_button.clicked.connect(self.on_fit)
 
@@ -150,7 +154,7 @@ class RadUIForm(QMainWindow):
 
     def on_fit(self):  # 拟合
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
-        r = float(self.fit_frame.r_label.text())
+        r = self.fit_frame.r_label.value()
         self.rad.fit(rad_id, r=r)
         # 绘制拟合曲线功能启用
         self.plot_setting_frame.plot_fit_checkbox.setEnabled(True)
