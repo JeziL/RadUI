@@ -203,8 +203,8 @@ class RadUIForm(QMainWindow):
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
             self.axes.invert_xaxis()
-            self.axes.set_xlabel("距离")
-            self.axes.set_ylabel("俯仰角")
+            self.axes.set_xlabel("距离 (m)")
+            self.axes.set_ylabel("俯仰角 (°)")
             self.axes.scatter(data.radialDistance, data.elevation, s=5)
             if plot_fit:
                 self.rad.plot_fitting("el", self.axes, rad_id)
@@ -212,8 +212,8 @@ class RadUIForm(QMainWindow):
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
             self.axes.invert_xaxis()
-            self.axes.set_xlabel("距离")
-            self.axes.set_ylabel("水平角")
+            self.axes.set_xlabel("距离 (m)")
+            self.axes.set_ylabel("水平角 (°)")
             self.axes.scatter(data.radialDistance, data.azimuth, s=5)
             if plot_fit:
                 self.rad.plot_fitting("az", self.axes, rad_id)
