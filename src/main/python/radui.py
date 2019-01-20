@@ -285,7 +285,7 @@ class RadUIForm(QMainWindow):
         if path:
             if not path[-4:] == ".mat".encode("utf-8"):
                 path += ".mat".encode("utf-8")
-            savemat(path.decode(), {'rad': dic_array}, oned_as="column")
+            savemat(path.decode(), {'rad': dic_array}, oned_as="column", do_compression=True)
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
