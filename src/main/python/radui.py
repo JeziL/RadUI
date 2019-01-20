@@ -199,6 +199,8 @@ class RadUIForm(QMainWindow):
         plot_fit = self.plot_setting_frame.plot_fit_checkbox.isChecked()
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
         data = self.rad.data[rad_id]
+        if plot_fit and rad_id not in self.rad.fit_param:
+            self.on_fit()
         if plot_type == 1:  # 距离-俯仰
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
