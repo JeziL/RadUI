@@ -17,6 +17,7 @@ class RadUIForm(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.adv_x = "radialDistance"
         self.adv_y = "x"
+        self.adv_fit = False
         self.init_main_frame()
 
     def init_main_frame(self):
@@ -260,7 +261,6 @@ class RadUIForm(QMainWindow):
         self.canvas.draw()
 
     def adv_fig(self):
-        # TODO: 拟合选项
         dialog = QDialog(self)
         dialog.setWindowTitle("高级绘图选项")
 
@@ -272,6 +272,7 @@ class RadUIForm(QMainWindow):
         x_axes.setEditable(False)
         x_axes.addItems(columns)
         x_axes.setCurrentText(self.adv_x)
+        x_axes.currentTextChanged.connect(self.adv_axes_changed)
         layout = QHBoxLayout()
         layout.addWidget(QLabel("x 轴："))
         layout.addWidget(x_axes)
@@ -282,10 +283,15 @@ class RadUIForm(QMainWindow):
         y_axes.setEditable(False)
         y_axes.addItems(columns)
         y_axes.setCurrentText(self.adv_y)
+        y_axes.currentTextChanged.connect(self.adv_axes_changed)
         layout = QHBoxLayout()
         layout.addWidget(QLabel("y 轴："))
         layout.addWidget(y_axes)
         y_frame.setLayout(layout)
+
+        adv_fit_checkbox = QCheckBox("显示拟合结果")
+        adv_fit_checkbox.setChecked(self.adv_fit)
+        adv_fit_checkbox.setEnabled(True)
 
         btn_frame = QWidget()
         ok_btn = QPushButton("确定")
@@ -304,14 +310,24 @@ class RadUIForm(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(x_frame)
         layout.addWidget(y_frame)
+        layout.addWidget(adv_fit_checkbox)
         layout.addWidget(btn_frame)
         dialog.setLayout(layout)
 
         dialog.finished.connect(self.on_adv_dialog_finished)
         dialog.x_axes = x_axes
         dialog.y_axes = y_axes
+        dialog.adv_fit_checkbox = adv_fit_checkbox
         self.adv_dialog = dialog
         dialog.exec()
+
+    def adv_axes_changed(self):
+        self.adv_x = self.adv_dialog.x_axes.currentText()
+        self.adv_y = self.adv_dialog.y_axes.currentText()
+        if self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
+            self.adv_dialog.adv_fit_checkbox.setEnabled(True)
+        else:
+            self.adv_dialog.adv_fit_checkbox.setEnabled(False)
 
     def on_adv_dialog_finished(self, result):
         if result != QDialog.Accepted:
@@ -320,6 +336,9 @@ class RadUIForm(QMainWindow):
         data = self.rad.data[rad_id]
         self.adv_x = self.adv_dialog.x_axes.currentText()
         self.adv_y = self.adv_dialog.y_axes.currentText()
+        self.adv_fit = self.adv_dialog.adv_fit_checkbox.isChecked()
+        if self.adv_fit and rad_id not in self.rad.fit_param:
+            self.on_fit()
         self.axes = self.fig.add_subplot(111)
         self.axes.clear()
         if self.adv_x == "radialDistance":
@@ -327,6 +346,8 @@ class RadUIForm(QMainWindow):
         self.axes.set_xlabel(AX_LABEL[self.adv_x])
         self.axes.set_ylabel(AX_LABEL[self.adv_y])
         self.axes.scatter(data[self.adv_x], data[self.adv_y], s=5)
+        if self.adv_fit and self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
+            self.rad.plot_fitting(self.adv_y, self.axes, rad_id)
 
         self.canvas.draw()
 
