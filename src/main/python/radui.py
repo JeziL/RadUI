@@ -260,6 +260,7 @@ class RadUIForm(QMainWindow):
             if plot_fit:
                 self.rad.plot_fitting("3d", self.axes, rad_id)
 
+        self.axes.set_title("{0} 号雷达".format(rad_id))
         self.canvas.draw()
 
     def adv_fig(self):
@@ -355,6 +356,7 @@ class RadUIForm(QMainWindow):
         elif self.adv_x in ["x", "y", "z"] and self.adv_y in ["x", "y", "z"]:
             self.rad.plot_fitting(self.adv_y, self.axes, rad_id, x=self.adv_x)
 
+        self.axes.set_title("{0} 号雷达".format(rad_id))
         self.canvas.draw()
 
     def save_fig(self):
