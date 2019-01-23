@@ -15,6 +15,8 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 class RadUIForm(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
+        self.adv_x = "radialDistance"
+        self.adv_y = "x"
         self.init_main_frame()
 
     def init_main_frame(self):
@@ -258,7 +260,6 @@ class RadUIForm(QMainWindow):
         self.canvas.draw()
 
     def adv_fig(self):
-        # TODO: 保存高级绘图状态
         # TODO: 拟合选项
         dialog = QDialog(self)
         dialog.setWindowTitle("高级绘图选项")
@@ -270,7 +271,7 @@ class RadUIForm(QMainWindow):
         x_axes = QComboBox()
         x_axes.setEditable(False)
         x_axes.addItems(columns)
-        x_axes.setCurrentText("radialDistance")
+        x_axes.setCurrentText(self.adv_x)
         layout = QHBoxLayout()
         layout.addWidget(QLabel("x 轴："))
         layout.addWidget(x_axes)
@@ -280,7 +281,7 @@ class RadUIForm(QMainWindow):
         y_axes = QComboBox()
         y_axes.setEditable(False)
         y_axes.addItems(columns)
-        y_axes.setCurrentText("x")
+        y_axes.setCurrentText(self.adv_y)
         layout = QHBoxLayout()
         layout.addWidget(QLabel("y 轴："))
         layout.addWidget(y_axes)
@@ -317,15 +318,15 @@ class RadUIForm(QMainWindow):
             return
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
         data = self.rad.data[rad_id]
-        x = self.adv_dialog.x_axes.currentText()
-        y = self.adv_dialog.y_axes.currentText()
+        self.adv_x = self.adv_dialog.x_axes.currentText()
+        self.adv_y = self.adv_dialog.y_axes.currentText()
         self.axes = self.fig.add_subplot(111)
         self.axes.clear()
-        if x == "radialDistance":
+        if self.adv_x == "radialDistance":
             self.axes.invert_xaxis()
-        self.axes.set_xlabel(AX_LABEL[x])
-        self.axes.set_ylabel(AX_LABEL[y])
-        self.axes.scatter(data[x], data[y], s=5)
+        self.axes.set_xlabel(AX_LABEL[self.adv_x])
+        self.axes.set_ylabel(AX_LABEL[self.adv_y])
+        self.axes.scatter(data[self.adv_x], data[self.adv_y], s=5)
 
         self.canvas.draw()
 
