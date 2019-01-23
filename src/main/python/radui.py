@@ -152,6 +152,8 @@ class RadUIForm(QMainWindow):
         for b in self.plot_setting_frame.plot_button_group.buttons():
             b.setEnabled(True)
         self.plot_setting_frame.redraw_button.setEnabled(True)
+        # 高级绘图选项菜单启用
+        self.plot_menu.actions()[0].setEnabled(True)
 
     def init_fit_frame(self):
         f = QWidget()
@@ -229,8 +231,8 @@ class RadUIForm(QMainWindow):
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
             self.axes.invert_xaxis()
-            self.axes.set_xlabel("距离 (m)")
-            self.axes.set_ylabel("俯仰角 (°)")
+            self.axes.set_xlabel(AX_LABEL["radialDistance"])
+            self.axes.set_ylabel(AX_LABEL["elevation"])
             self.axes.scatter(data.radialDistance, data.elevation, s=5)
             if plot_fit:
                 self.rad.plot_fitting("el", self.axes, rad_id)
@@ -238,20 +240,92 @@ class RadUIForm(QMainWindow):
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
             self.axes.invert_xaxis()
-            self.axes.set_xlabel("距离 (m)")
-            self.axes.set_ylabel("水平角 (°)")
+            self.axes.set_xlabel(AX_LABEL["radialDistance"])
+            self.axes.set_ylabel(AX_LABEL["azimuth"])
             self.axes.scatter(data.radialDistance, data.azimuth, s=5)
             if plot_fit:
                 self.rad.plot_fitting("az", self.axes, rad_id)
         else:  # 3D
             self.axes = self.fig.add_subplot(111, projection="3d")
             self.axes.clear()
-            self.axes.set_xlabel("x")
-            self.axes.set_ylabel("y")
-            self.axes.set_zlabel("z")
+            self.axes.set_xlabel(AX_LABEL["x"])
+            self.axes.set_ylabel(AX_LABEL["y"])
+            self.axes.set_zlabel(AX_LABEL["z"])
             self.axes.scatter(data.x, data.y, data.z, s=5)
             if plot_fit:
                 self.rad.plot_fitting("3d", self.axes, rad_id)
+
+        self.canvas.draw()
+
+    def adv_fig(self):
+        # TODO: 保存高级绘图状态
+        # TODO: 拟合选项
+        dialog = QDialog(self)
+        dialog.setWindowTitle("高级绘图选项")
+
+        rad_id = self.rad_select_frame.rad_button_group.checkedId()
+        columns = self.rad.data[rad_id].columns.values
+
+        x_frame = QWidget()
+        x_axes = QComboBox()
+        x_axes.setEditable(False)
+        x_axes.addItems(columns)
+        x_axes.setCurrentText("radialDistance")
+        layout = QHBoxLayout()
+        layout.addWidget(QLabel("x 轴："))
+        layout.addWidget(x_axes)
+        x_frame.setLayout(layout)
+
+        y_frame = QWidget()
+        y_axes = QComboBox()
+        y_axes.setEditable(False)
+        y_axes.addItems(columns)
+        y_axes.setCurrentText("x")
+        layout = QHBoxLayout()
+        layout.addWidget(QLabel("y 轴："))
+        layout.addWidget(y_axes)
+        y_frame.setLayout(layout)
+
+        btn_frame = QWidget()
+        ok_btn = QPushButton("确定")
+        ok_btn.setAutoDefault(False)
+        ok_btn.setDefault(True)
+        ok_btn.clicked.connect(dialog.accept)
+        cancel_btn = QPushButton("取消")
+        cancel_btn.setAutoDefault(False)
+        cancel_btn.setDefault(False)
+        cancel_btn.clicked.connect(dialog.reject)
+        layout = QHBoxLayout()
+        layout.addWidget(cancel_btn)
+        layout.addWidget(ok_btn)
+        btn_frame.setLayout(layout)
+
+        layout = QVBoxLayout()
+        layout.addWidget(x_frame)
+        layout.addWidget(y_frame)
+        layout.addWidget(btn_frame)
+        dialog.setLayout(layout)
+
+        dialog.finished.connect(self.on_adv_dialog_finished)
+        dialog.x_axes = x_axes
+        dialog.y_axes = y_axes
+        self.adv_dialog = dialog
+        dialog.exec()
+
+    def on_adv_dialog_finished(self, result):
+        if result != QDialog.Accepted:
+            return
+        rad_id = self.rad_select_frame.rad_button_group.checkedId()
+        data = self.rad.data[rad_id]
+        x = self.adv_dialog.x_axes.currentText()
+        y = self.adv_dialog.y_axes.currentText()
+        self.axes = self.fig.add_subplot(111)
+        self.axes.clear()
+        if x == "radialDistance":
+            self.axes.invert_xaxis()
+        self.axes.set_xlabel(AX_LABEL[x])
+        self.axes.set_ylabel(AX_LABEL[y])
+        self.axes.scatter(data[x], data[y], s=5)
 
         self.canvas.draw()
 
@@ -291,6 +365,12 @@ class RadUIForm(QMainWindow):
         self.data_menu.addAction(save_mat_action)
 
         self.plot_menu = self.menuBar().addMenu("&绘图")
+
+        adv_figure_action = QAction("&高级...", self)
+        adv_figure_action.setStatusTip("自定义绘图选项")
+        adv_figure_action.triggered.connect(self.adv_fig)
+        adv_figure_action.setEnabled(False)
+        self.plot_menu.addAction(adv_figure_action)
 
         save_figure_action = QAction("&保存当前图象...", self)
         save_figure_action.setShortcut("Ctrl+S")

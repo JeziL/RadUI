@@ -1,6 +1,18 @@
 import numpy as np
 import pandas as pd
 
+AX_LABEL = {
+    "threatId": "威胁 ID",
+    "Time": "时间 (s)",
+    "radialDistance": "距离 (m)",
+    "velocity": "速度 (m/s)",
+    "azimuth": "水平角 (°)",
+    "elevation": "俯仰角 (°)",
+    "x": "x",
+    "y": "y",
+    "z": "z"
+}
+
 
 class RDData:
     def __init__(self, filename):
