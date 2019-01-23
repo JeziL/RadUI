@@ -107,6 +107,7 @@ class RadUIForm(QMainWindow):
         self.plot_setting_frame.redraw_button.setEnabled(False)
         self.plot_setting_frame.plot_fit_checkbox.setChecked(False)
         self.plot_setting_frame.plot_fit_checkbox.setEnabled(False)
+        self.plot_menu.actions()[0].setEnabled(False)
         ## 清空图象
         self.fig.clear()
         # 更新各雷达点数
