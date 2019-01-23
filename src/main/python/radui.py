@@ -185,7 +185,7 @@ class RadUIForm(QMainWindow):
         self.plot_setting_frame.plot_fit_checkbox.setEnabled(True)
 
     def init_plot_setting_frame(self):
-        f = QGroupBox("绘图选项")
+        f = QGroupBox("快速绘图选项")
 
         f.plot_button_group = QButtonGroup()
         r1 = QRadioButton("距离-俯仰")
