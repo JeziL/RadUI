@@ -4,6 +4,7 @@ from PandasModel import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+import datetime
 import matplotlib
 from scipy.io import savemat
 from matplotlib.figure import Figure
@@ -13,8 +14,9 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 
 
 class RadUIForm(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, app_context, parent=None):
         QMainWindow.__init__(self, parent)
+        self.app_context = app_context
         self.adv_x = "radialDistance"
         self.adv_y = "x"
         self.adv_fit = False
@@ -409,6 +411,13 @@ class RadUIForm(QMainWindow):
         save_figure_action.triggered.connect(self.save_fig)
         self.plot_menu.addAction(save_figure_action)
 
+        self.help_menu = self.menuBar().addMenu("&帮助")
+
+        about_action = QAction("&关于", self)
+        about_action.setStatusTip("关于 RadUI")
+        about_action.triggered.connect(self.about_dialog)
+        self.help_menu.addAction(about_action)
+
     def save_mat(self):
         dic_array = []
         for rad_id in self.rad.available_radar:
@@ -423,6 +432,28 @@ class RadUIForm(QMainWindow):
             if not path[-4:] == ".mat".encode("utf-8"):
                 path += ".mat".encode("utf-8")
             savemat(path.decode(), {'rad': dic_array}, oned_as="column", do_compression=True)
+
+    def about_dialog(self):
+        dialog = QDialog(self, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
+        dialog.setWindowTitle("关于 RadUI")
+        text_label = QLabel(dialog)
+        text_label.setFrameStyle(QFrame.NoFrame)
+
+        html = open(self.app_context.get_resource("about.html"), encoding="utf8").read()
+        html = html.replace("$APP_VER$", self.app_context.build_settings["version"])
+        until_year = ""
+        now_year = datetime.datetime.now().year
+        if now_year > 2019:
+            until_year = " - {0}".format(now_year)
+        html = html.replace("$UNTIL_YEAR$", until_year)
+        text_label.setTextFormat(Qt.RichText)
+        text_label.setText(html)
+        text_label.setOpenExternalLinks(True)
+
+        layout = QVBoxLayout()
+        layout.addWidget(text_label)
+        dialog.setLayout(layout)
+        dialog.show()
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:

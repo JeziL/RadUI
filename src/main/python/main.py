@@ -5,9 +5,8 @@ from fbs_runtime.application_context import ApplicationContext
 
 class AppContext(ApplicationContext):
     def run(self):
-        window = RadUIForm()
-        version = self.build_settings["version"]
-        window.setWindowTitle("RadUI v" + version)
+        window = RadUIForm(self)
+        window.setWindowTitle("RadUI")
         window.resize(1920, 1080)
         window.show()
         return self.app.exec_()
