@@ -326,6 +326,8 @@ class RadUIForm(QMainWindow):
         self.adv_y = self.adv_dialog.y_axes.currentText()
         if self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
             self.adv_dialog.adv_fit_checkbox.setEnabled(True)
+        elif self.adv_x in ["x", "y", "z"] and self.adv_y in ["x", "y", "z"]:
+            self.adv_dialog.adv_fit_checkbox.setEnabled(True)
         else:
             self.adv_dialog.adv_fit_checkbox.setEnabled(False)
 
@@ -348,6 +350,8 @@ class RadUIForm(QMainWindow):
         self.axes.scatter(data[self.adv_x], data[self.adv_y], s=5)
         if self.adv_fit and self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
             self.rad.plot_fitting(self.adv_y, self.axes, rad_id)
+        elif self.adv_x in ["x", "y", "z"] and self.adv_y in ["x", "y", "z"]:
+            self.rad.plot_fitting(self.adv_y, self.axes, rad_id, x=self.adv_x)
 
         self.canvas.draw()
 

@@ -71,7 +71,7 @@ class RDData:
                 self.fit_param[rad_id]["TH"][i] = self.fit_param[rad_id]["TH"][i] + np.dot(ll, (
                             y - np.dot(ps, self.fit_param[rad_id]["TH"][i])))
 
-    def plot_fitting(self, var, axes, rad_id):
+    def plot_fitting(self, var, axes, rad_id, x="radialDistance"):
         rad = self.data[rad_id]
         d_max = rad.radialDistance.max()
         d_min = rad.radialDistance.min()
@@ -81,19 +81,25 @@ class RDData:
         x_h = np.squeeze(np.asarray(np.dot(d, self.fit_param[rad_id]["TH"][0])[:, 0]))
         y_h = np.squeeze(np.asarray(np.dot(d, self.fit_param[rad_id]["TH"][1])[:, 0]))
         z_h = np.squeeze(np.asarray(np.dot(d, self.fit_param[rad_id]["TH"][2])[:, 0]))
+        fit_table = {"x": x_h, "y": y_h, "z": z_h}
         if var == "3d":
             axes.plot(x_h, y_h, z_h, 'r')
-        elif var == "elevation":
-            el_h = np.rad2deg(np.arcsin(z_h / np.sqrt(np.power(x_h, 2) + np.power(y_h, 2) + np.power(z_h, 2))))
-            axes.plot(ds, el_h, 'r')
-        elif var == "azimuth":
-            az_h = np.rad2deg(np.arctan(y_h / x_h))
-            axes.plot(ds, az_h, 'r')
-        elif var == "x":
-            axes.plot(ds, x_h, 'r')
-        elif var == "y":
-            axes.plot(ds, y_h, 'r')
-        elif var == "z":
-            axes.plot(ds, z_h, 'r')
+            return
+        elif x == "radialDistance":
+            if var == "elevation":
+                el_h = np.rad2deg(np.arcsin(z_h / np.sqrt(np.power(x_h, 2) + np.power(y_h, 2) + np.power(z_h, 2))))
+                axes.plot(ds, el_h, 'r')
+            elif var == "azimuth":
+                az_h = np.rad2deg(np.arctan(y_h / x_h))
+                axes.plot(ds, az_h, 'r')
+            elif var in fit_table:
+                axes.plot(ds, fit_table[var], 'r')
+            else:
+                return
+        elif x in fit_table:
+            if var in fit_table:
+                axes.plot(fit_table[x], fit_table[var], 'r')
+            else:
+                return
         else:
             return
