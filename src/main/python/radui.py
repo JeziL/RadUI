@@ -263,8 +263,8 @@ class RadUIForm(QMainWindow):
         self.axes.set_title("{0} 号雷达".format(rad_id))
         self.canvas.draw()
 
-    def adv_fig(self):
-        dialog = QDialog(self)
+    def adv_fig_dialog(self):
+        dialog = QDialog(self, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         dialog.setWindowTitle("高级绘图选项")
 
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
@@ -398,7 +398,7 @@ class RadUIForm(QMainWindow):
 
         adv_figure_action = QAction("&高级...", self)
         adv_figure_action.setStatusTip("自定义绘图选项")
-        adv_figure_action.triggered.connect(self.adv_fig)
+        adv_figure_action.triggered.connect(self.adv_fig_dialog)
         adv_figure_action.setEnabled(False)
         self.plot_menu.addAction(adv_figure_action)
 
