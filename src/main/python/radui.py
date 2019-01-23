@@ -212,6 +212,7 @@ class RadUIForm(QMainWindow):
         layout.addWidget(f.plot_fit_checkbox)
         layout.addWidget(f.redraw_button)
         f.setLayout(layout)
+        f.setMaximumHeight(80)
         self.plot_setting_frame = f
 
     def init_figure_frame(self):
