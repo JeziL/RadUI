@@ -18,7 +18,9 @@ class RadUIForm(QMainWindow):
         self.init_main_frame()
 
     def init_main_frame(self):
-        self.main_frame = QWidget()
+        self.main_frame = QSplitter()
+        self.left_frame = QWidget()
+        self.right_frame = QWidget()
 
         self.init_menu()
         self.init_open_file_frame()
@@ -28,14 +30,32 @@ class RadUIForm(QMainWindow):
         self.init_plot_setting_frame()
         self.init_figure_frame()
 
-        layout = QGridLayout()
-        layout.addWidget(self.open_file_frame, 1, 1)
-        layout.addWidget(self.rad_select_frame, 2, 1)
-        layout.addWidget(self.table_frame, 3, 1)
-        layout.addWidget(self.fit_frame, 4, 1)
-        layout.addWidget(self.plot_setting_frame, 1, 2)
-        layout.addWidget(self.figure_frame, 2, 2, 3, 1)
-        self.main_frame.setLayout(layout)
+        layout = QVBoxLayout()
+        layout.addWidget(self.open_file_frame)
+        layout.addWidget(self.rad_select_frame)
+        layout.addWidget(self.table_frame)
+        layout.addWidget(self.fit_frame)
+        self.left_frame.setLayout(layout)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.plot_setting_frame)
+        layout.addWidget(self.figure_frame)
+        self.right_frame.setLayout(layout)
+
+        self.main_frame.addWidget(self.left_frame)
+        self.main_frame.addWidget(self.right_frame)
+
+        self.main_frame.setChildrenCollapsible(True)
+        self.main_frame.setHandleWidth(2)
+        self.main_frame.setStyleSheet("""
+            QSplitter::handle {
+                width: 2px;
+                margin-left: 8px;
+                margin-right: 8px;
+                background-color: darkgrey;
+            }
+        """)
+
         self.setCentralWidget(self.main_frame)
         self.setAcceptDrops(True)
     
