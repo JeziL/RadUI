@@ -83,9 +83,17 @@ class RDData:
         z_h = np.squeeze(np.asarray(np.dot(d, self.fit_param[rad_id]["TH"][2])[:, 0]))
         if var == "3d":
             axes.plot(x_h, y_h, z_h, 'r')
-        elif var == "el":
+        elif var == "elevation":
             el_h = np.rad2deg(np.arcsin(z_h / np.sqrt(np.power(x_h, 2) + np.power(y_h, 2) + np.power(z_h, 2))))
             axes.plot(ds, el_h, 'r')
-        elif var == "az":
+        elif var == "azimuth":
             az_h = np.rad2deg(np.arctan(y_h / x_h))
             axes.plot(ds, az_h, 'r')
+        elif var == "x":
+            axes.plot(ds, x_h, 'r')
+        elif var == "y":
+            axes.plot(ds, y_h, 'r')
+        elif var == "z":
+            axes.plot(ds, z_h, 'r')
+        else:
+            return

@@ -237,7 +237,7 @@ class RadUIForm(QMainWindow):
             self.axes.set_ylabel(AX_LABEL["elevation"])
             self.axes.scatter(data.radialDistance, data.elevation, s=5)
             if plot_fit:
-                self.rad.plot_fitting("el", self.axes, rad_id)
+                self.rad.plot_fitting("elevation", self.axes, rad_id)
         elif plot_type == 2:  # 距离-水平
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
@@ -246,7 +246,7 @@ class RadUIForm(QMainWindow):
             self.axes.set_ylabel(AX_LABEL["azimuth"])
             self.axes.scatter(data.radialDistance, data.azimuth, s=5)
             if plot_fit:
-                self.rad.plot_fitting("az", self.axes, rad_id)
+                self.rad.plot_fitting("azimuth", self.axes, rad_id)
         else:  # 3D
             self.axes = self.fig.add_subplot(111, projection="3d")
             self.axes.clear()
