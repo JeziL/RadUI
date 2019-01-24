@@ -57,6 +57,8 @@ class RadUIForm(QMainWindow):
                 width: 2px;
                 margin-left: 8px;
                 margin-right: 8px;
+                margin-top: 12px;
+                margin-bottom: 12px;
                 background-color: darkgrey;
             }
         """)
