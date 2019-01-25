@@ -1,0 +1,28 @@
+image: Visual Studio 2017
+
+init:
+  - cmd: set PATH=C:\Python36-x64;C:\Python36-x64\Scripts;%PATH%
+
+install:
+  - cmd: pip install -r requirements.txt
+
+build_script:
+  - cmd: fbs freeze
+  - cmd: fbs installer
+
+test: off
+
+artifacts:
+  - path: target/*.exe
+
+deploy:
+  release: RadUI v$(APPVEYOR_REPO_TAG_NAME)
+  description: v$(APPVEYOR_REPO_TAG_NAME)
+  provider: GitHub
+  auth_token:
+    secure: 53u7Clmlpi3EqWSGTNHIvI8S0fovzv6YrKpVgI92VuSGdfJcIPDkjK83pal8xN89
+  artifact: target\RadUISetup.exe
+  force_update: true
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
