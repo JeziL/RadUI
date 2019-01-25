@@ -18,3 +18,10 @@ install:
 script:
   - fbs freeze
   - fbs installer
+
+deploy:
+  provider: s3
+  access_key_id: AKIAJUX7ME2CPYH73DNQ
+  secret_access_key:
+    secure: DEQAWQV+ASPU2XN62i3BgBkwCjp8pcSx4Swh0aledBKOxnOzAmax4tjiREX63yRw315rFOKeBtjxe6gDtO/iMVd1wouTQQDrKz4OATk+yiQn/XXv3g795EvP5+ZZgGwmJWHIXEnY2b04ScMuMr5ixv5d/AW5cVdMWqI03xr9Ain3mtg7M8MLlV5/g3z8bklOR0RIUNcipAHV7UBXydcvbcBZ1Py7qWIP+IhJq9ZuwtRWHd0mOFPjJyjZ6LvMLQCBkws63WhTWYZkct8N0IkGh7w9fSmUhGHqpf6FQPFwwJ/8QdvxDl+EpdqQ8xvImlvVmNs/ZRl+5vQu4LSbZ99PD68yGzSW+hePLLpsX8iYsYEyDtwW6jvMX8D0K03jQDoQTv3QkSgKsqLXaoONcFmx2JsVS2TZizDo7+R9hWgnRzA0+UX5o0vadal2f762vuNBkHlDKzpdkGqSW8FNtQ41cUrPC7tAIrlRNpjJg+Bq7qvZ5iBbGlZZZMsUYSzFFeCHQ1PhkFI18+oBJhLXbdaMVMLI/Tl8JUTQlSJxHWfycPcuAkVCPY+wh5xkY754HS8lvW8UixKioQPkPuOwTrZvpawJcps536py+WqRuTW6zqiadviMG6Anhi/o0g+LpYU9eRSHNu8Q8MrxptjzFFt2BnOIySXtR4pp+P9xS2DprTI=
+  bucket: elasticbeanstalk-us-west-1-288074043611
