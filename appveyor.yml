@@ -5,6 +5,7 @@ init:
 
 install:
   - cmd: pip install -r requirements.txt
+  - cmd: pip install pywin32==224
 
 build_script:
   - cmd: fbs freeze

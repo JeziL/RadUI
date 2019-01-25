@@ -5,5 +5,4 @@ matplotlib==3.0.2
 numpy==1.15.4
 pandas==0.23.4
 scipy==1.2.0
-pywin32==224
 tornado==5.1.1
