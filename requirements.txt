@@ -1,0 +1,9 @@
+PyQt5==5.11.3
+PyInstaller==3.4
+fbs==0.6.6
+matplotlib==3.0.2
+numpy==1.15.4
+pandas==0.23.4
+scipy==1.2.0
+pywin32==224
+tornado==5.1.1
