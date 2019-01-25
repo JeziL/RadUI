@@ -17,8 +17,8 @@ artifacts:
   - path: target/*.exe
 
 deploy:
-  release: RadUI v$(APPVEYOR_REPO_TAG_NAME)
-  description: v$(APPVEYOR_REPO_TAG_NAME)
+  release: $(APPVEYOR_REPO_TAG_NAME)
+  description: $(APPVEYOR_REPO_TAG_NAME)
   provider: GitHub
   auth_token:
     secure: 53u7Clmlpi3EqWSGTNHIvI8S0fovzv6YrKpVgI92VuSGdfJcIPDkjK83pal8xN89
