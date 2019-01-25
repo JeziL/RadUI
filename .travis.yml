@@ -1,13 +1,14 @@
 os: osx
 language: generic
 
+env:
+  - PYENV_VERSION=3.6.8
+
 before_install: |
   brew outdated pyenv || brew upgrade pyenv
   brew install pyenv-virtualenv
   pyenv install 3.6.8
-  export PATH="/Users/travis/.pyenv/versions/3.6.8:${PATH}"
-  pyenv-virtualenv venv
-  source venv/bin/activate
+  export PATH="/Users/travis/.pyenv/shims:${PATH}"
   python --version
 
 install:
