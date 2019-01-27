@@ -162,6 +162,10 @@ class RadUIForm(QMainWindow):
         self.plot_setting_frame.redraw_button.setEnabled(True)
         # 高级绘图选项菜单启用
         self.plot_menu.actions()[0].setEnabled(True)
+        # 已经选择过绘图类型则直接重绘
+        plot_type = self.plot_setting_frame.plot_button_group.checkedId()
+        if plot_type != -1:
+            self.on_plot()
 
     def init_fit_frame(self):
         f = QWidget()
@@ -188,6 +192,11 @@ class RadUIForm(QMainWindow):
         self.rad.fit(rad_id, r=r)
         # 绘制拟合曲线功能启用
         self.plot_setting_frame.plot_fit_checkbox.setEnabled(True)
+        # 已经绘制过拟合图象则直接重绘
+        plot_type = self.plot_setting_frame.plot_button_group.checkedId()
+        plot_fit = self.plot_setting_frame.plot_fit_checkbox.isChecked()
+        if plot_type != -1 and plot_fit:
+            self.on_plot()
 
     def init_plot_setting_frame(self):
         f = QGroupBox("快速绘图选项")
