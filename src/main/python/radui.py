@@ -119,8 +119,9 @@ class RadUIForm(QMainWindow):
             b = self.rad_select_frame.rad_button_group.button(i)
             b.setText("{0} 号雷达 ({1} 点)".format(i, len(self.rad.data[i].index)))
             b.setEnabled(True)
-        # 开启导出至 MATLAB 选项
-        self.data_menu.actions()[0].setEnabled(True)
+        # 开启导出数据选项
+        self.data_menu.actions()[0].setEnabled(True)  # MATLAB
+        self.data_menu.actions()[1].setEnabled(True)  # Excel
     
     def init_rad_select_frame(self):
         f = QGroupBox("雷达选择")
@@ -408,6 +409,12 @@ class RadUIForm(QMainWindow):
         save_mat_action.setEnabled(False)
         self.data_menu.addAction(save_mat_action)
 
+        save_xls_action = QAction("&导出至 Excel...", self)
+        save_xls_action.setStatusTip("导出当前雷达数据至 Excel 工作簿文件")
+        save_xls_action.triggered.connect(self.save_xls)
+        save_xls_action.setEnabled(False)
+        self.data_menu.addAction(save_xls_action)
+
         self.plot_menu = self.menuBar().addMenu("&绘图")
 
         adv_figure_action = QAction("&高级...", self)
@@ -443,6 +450,17 @@ class RadUIForm(QMainWindow):
             if not path[-4:] == ".mat".encode("utf-8"):
                 path += ".mat".encode("utf-8")
             savemat(path.decode(), {'rad': dic_array}, oned_as="column", do_compression=True)
+
+    def save_xls(self):
+        file_choices = "Excel 文件 (*.xlsx)"
+        path, ext = QFileDialog.getSaveFileName(self, "导出雷达数据", "", file_choices)
+        path = path.encode("utf-8")
+        if path:
+            if not path[-5:] == ".xlsx".encode("utf-8"):
+                path += ".xlsx".encode("utf-8")
+            with pd.ExcelWriter(path.decode()) as writer:
+                for rad_id in self.rad.available_radar:
+                    self.rad.data[rad_id].to_excel(writer, sheet_name="{0} 号雷达".format(rad_id))
 
     def about_dialog(self):
         dialog = QDialog(self, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
