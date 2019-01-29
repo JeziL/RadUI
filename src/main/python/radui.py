@@ -382,6 +382,7 @@ class RadUIForm(QMainWindow):
             if not path[-4:] == ".png".encode("utf-8"):
                 path += ".png".encode("utf-8")
             self.canvas.print_figure(path.decode(), dpi=100)
+            QMessageBox.information(None, "保存", "图象保存成功！", QMessageBox.Ok)
 
     def init_menu(self):
         self.menuBar().setNativeMenuBar(True)
@@ -450,6 +451,7 @@ class RadUIForm(QMainWindow):
             if not path[-4:] == ".mat".encode("utf-8"):
                 path += ".mat".encode("utf-8")
             savemat(path.decode(), {'rad': dic_array}, oned_as="column", do_compression=True)
+            QMessageBox.information(None, "导出", "雷达数据导出成功！", QMessageBox.Ok)
 
     def save_xls(self):
         file_choices = "Excel 文件 (*.xlsx)"
@@ -461,6 +463,7 @@ class RadUIForm(QMainWindow):
             with pd.ExcelWriter(path.decode()) as writer:
                 for rad_id in self.rad.available_radar:
                     self.rad.data[rad_id].to_excel(writer, sheet_name="{0} 号雷达".format(rad_id))
+            QMessageBox.information(None, "导出", "雷达数据导出成功！", QMessageBox.Ok)
 
     def about_dialog(self):
         dialog = QDialog(self, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
