@@ -60,8 +60,8 @@ class RDData:
         for _, d in self.data[rad_id].iterrows():
             if d.radialDistance <= stop:
                 break
-            ps = np.matrix([d.radialDistance, 1])
-            y_3d = [np.matrix([d.x, 1]), np.matrix([d.y, 1]), np.matrix([d.z, 1])]
+            ps = np.array([[d.radialDistance, 1]])
+            y_3d = [np.array([[d.x, 1]]), np.array([[d.y, 1]]), np.array([[d.z, 1]])]
             for i in range(3):
                 y = y_3d[i]
                 ll = 1 / r * np.dot(self.fit_param[rad_id]["P"][i], ps.T) * np.linalg.inv(
