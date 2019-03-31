@@ -54,12 +54,13 @@ class RDData:
             ret.append("{0} 号雷达：{1} 点".format(i, len(self.data[i].index)))
         return "\n".join(ret)
 
-    def fit(self, rad_id, stop=40, r=0.97, a=1):
+    def fit(self, rad_id, threats, stop=40, r=0.97, a=1):
         self.fit_param[rad_id] = {"P": [], "TH": []}
         for i in range(3):
             self.fit_param[rad_id]["P"].append(10e5 * np.eye(2))
             self.fit_param[rad_id]["TH"].append(np.zeros((2, 2)))
-        for _, d in self.data[rad_id].iterrows():
+        data = self.data[rad_id]
+        for _, d in data[data["threatId"].isin(threats)].iterrows():
             if d.radialDistance <= stop:
                 break
             ps = np.array([[d.radialDistance, 1]])
@@ -73,8 +74,11 @@ class RDData:
                 self.fit_param[rad_id]["TH"][i] = self.fit_param[rad_id]["TH"][i] + np.dot(ll, (
                             y - np.dot(ps, self.fit_param[rad_id]["TH"][i])))
 
-    def plot_fitting(self, var, axes, rad_id, x="radialDistance"):
-        rad = self.data[rad_id]
+    def plot_fitting(self, var, axes, rad_id, threats, x="radialDistance"):
+        if len(threats) <= 0:
+            return
+        data = self.data[rad_id]
+        rad = data[data["threatId"].isin(threats)]
         d_max = rad.radialDistance.max()
         d_min = rad.radialDistance.min()
         ds = np.arange(d_min, d_max, 0.001)[np.newaxis].T

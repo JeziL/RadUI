@@ -195,12 +195,9 @@ class RadUIForm(QMainWindow):
         self.reset_plot_settings()
 
     def on_threat_select(self):  # 选择威胁
-        rad_id = self.rad_select_frame.rad_button_group.checkedId()
-        threat_group = self.threat_select_frame.threat_button_group
-        checked_threats = [int(b.text()) for b in threat_group.buttons() if b.isChecked()]
         # 显示表格
-        data = self.rad.data[rad_id]
-        self.table_frame.setModel(PandasModel(data[data["threatId"].isin(checked_threats)].reset_index(drop=True)))
+        data, _, _ = self.current_data()
+        self.table_frame.setModel(PandasModel(data))
         # 绘图选项启用
         for b in self.plot_setting_frame.plot_button_group.buttons():
             b.setEnabled(True)
@@ -231,17 +228,24 @@ class RadUIForm(QMainWindow):
         f.setLayout(layout)
         self.fit_frame = f
 
-    def on_fit(self):  # 拟合
+    def current_data(self):
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
+        threat_group = self.threat_select_frame.threat_button_group
+        checked_threats = [int(b.text()) for b in threat_group.buttons() if b.isChecked()]
+        data = self.rad.data[rad_id]
+        return data[data["threatId"].isin(checked_threats)].reset_index(drop=True), rad_id, checked_threats
+
+    def on_fit(self):  # 拟合
+        _, rad_id, checked_threats = self.current_data()
         r = self.fit_frame.r_label.value()
-        self.rad.fit(rad_id, r=r)
+        self.rad.fit(rad_id, checked_threats, r=r)
         # 绘制拟合曲线功能启用
         self.plot_setting_frame.plot_fit_checkbox.setEnabled(True)
         # 已经绘制过拟合图象则直接重绘
         plot_type = self.plot_setting_frame.plot_button_group.checkedId()
         plot_fit = self.plot_setting_frame.plot_fit_checkbox.isChecked()
         if plot_type != -1 and plot_fit:
-            self.on_plot()
+            self.on_plot(refit=True)
 
     def init_plot_setting_frame(self):
         f = QGroupBox("快速绘图选项")
@@ -283,12 +287,11 @@ class RadUIForm(QMainWindow):
         layout.addWidget(self.canvas)
         self.figure_frame.setLayout(layout)
 
-    def on_plot(self):
+    def on_plot(self, refit=False):
         plot_type = self.plot_setting_frame.plot_button_group.checkedId()
         plot_fit = self.plot_setting_frame.plot_fit_checkbox.isChecked()
-        rad_id = self.rad_select_frame.rad_button_group.checkedId()
-        data = self.rad.data[rad_id]
-        if plot_fit and rad_id not in self.rad.fit_param:
+        data, rad_id, checked_threats = self.current_data()
+        if plot_fit and not refit:
             self.on_fit()
         if plot_type == 1:  # 距离-俯仰
             self.axes = self.fig.add_subplot(111)
@@ -298,7 +301,7 @@ class RadUIForm(QMainWindow):
             self.axes.set_ylabel(AX_LABEL["elevation"])
             self.axes.scatter(data.radialDistance, data.elevation, s=5)
             if plot_fit:
-                self.rad.plot_fitting("elevation", self.axes, rad_id)
+                self.rad.plot_fitting("elevation", self.axes, rad_id, checked_threats)
         elif plot_type == 2:  # 距离-水平
             self.axes = self.fig.add_subplot(111)
             self.axes.clear()
@@ -307,7 +310,7 @@ class RadUIForm(QMainWindow):
             self.axes.set_ylabel(AX_LABEL["azimuth"])
             self.axes.scatter(data.radialDistance, data.azimuth, s=5)
             if plot_fit:
-                self.rad.plot_fitting("azimuth", self.axes, rad_id)
+                self.rad.plot_fitting("azimuth", self.axes, rad_id, checked_threats)
         else:  # 3D
             self.axes = self.fig.add_subplot(111, projection="3d")
             self.axes.clear()
@@ -316,7 +319,7 @@ class RadUIForm(QMainWindow):
             self.axes.set_zlabel(AX_LABEL["z"])
             self.axes.scatter(data.x, data.y, data.z, s=5)
             if plot_fit:
-                self.rad.plot_fitting("3d", self.axes, rad_id)
+                self.rad.plot_fitting("3d", self.axes, rad_id, checked_threats)
 
         self.axes.set_title("{0} 号雷达".format(rad_id))
         self.canvas.draw()
