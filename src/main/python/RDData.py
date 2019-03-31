@@ -21,6 +21,7 @@ class RDData:
             self.df = pd.read_csv(f, sep="\t")
         self.rdGroup = self.df.groupby("radId")
         self.data = {}
+        self.threats = {}
         self.fit_param = {}
         for rdId, group in self.rdGroup:
             rad = group[group["threatId"] > 0][
@@ -28,6 +29,7 @@ class RDData:
             rad = RDData.polar_to_cartesian(rad)
             rad = rad.reset_index(drop=True)
             self.data[rdId] = rad
+            self.threats[rdId] = rad.groupby("threatId")
 
     @staticmethod
     def polar_to_cartesian(df):

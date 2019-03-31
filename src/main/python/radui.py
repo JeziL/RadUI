@@ -29,6 +29,7 @@ class RadUIForm(QMainWindow):
 
         self.init_menu()
         self.init_rad_select_frame()
+        self.init_threat_select_frame()
         self.init_table_frame()
         self.init_fit_frame()
         self.init_plot_setting_frame()
@@ -36,6 +37,7 @@ class RadUIForm(QMainWindow):
 
         layout = QVBoxLayout()
         layout.addWidget(self.rad_select_frame)
+        layout.addWidget(self.threat_select_frame)
         layout.addWidget(self.table_frame)
         layout.addWidget(self.fit_frame)
         self.left_frame.setLayout(layout)
@@ -72,6 +74,19 @@ class RadUIForm(QMainWindow):
         if dlg.exec() and len(dlg.selectedFiles()):  # 打开文件
             self.load_file(dlg.selectedFiles()[0])
 
+    def reset_plot_settings(self):
+        self.plot_setting_frame.plot_button_group.setExclusive(False)
+        for b in self.plot_setting_frame.plot_button_group.buttons():
+            b.setChecked(False)
+            b.setEnabled(False)
+        self.plot_setting_frame.plot_button_group.setExclusive(True)
+        self.plot_setting_frame.redraw_button.setEnabled(False)
+        self.plot_setting_frame.plot_fit_checkbox.setChecked(False)
+        self.plot_setting_frame.plot_fit_checkbox.setEnabled(False)
+        self.plot_menu.actions()[0].setEnabled(False)
+        # 清空图象
+        self.fig.clear()
+
     def load_file(self, filename):
         self.filename = filename
         self.window().setWindowTitle("RadUI - {0}".format(self.filename))
@@ -84,20 +99,15 @@ class RadUIForm(QMainWindow):
             b.setChecked(False)
             b.setEnabled(False)
         self.rad_select_frame.rad_button_group.setExclusive(True)
+        ## 还原威胁选择
+        for b in self.threat_select_frame.threat_button_group.buttons():
+            b.setText("-")
+            b.setChecked(False)
+            b.setEnabled(False)
         ## 清空数据表
         self.table_frame.setModel(None)
         ## 还原绘图设置
-        self.plot_setting_frame.plot_button_group.setExclusive(False)
-        for b in self.plot_setting_frame.plot_button_group.buttons():
-            b.setChecked(False)
-            b.setEnabled(False)
-        self.plot_setting_frame.plot_button_group.setExclusive(True)
-        self.plot_setting_frame.redraw_button.setEnabled(False)
-        self.plot_setting_frame.plot_fit_checkbox.setChecked(False)
-        self.plot_setting_frame.plot_fit_checkbox.setEnabled(False)
-        self.plot_menu.actions()[0].setEnabled(False)
-        ## 清空图象
-        self.fig.clear()
+        self.reset_plot_settings()
         # 更新各雷达点数
         for i in self.rad.available_radar:
             b = self.rad_select_frame.rad_button_group.button(i)
@@ -134,13 +144,63 @@ class RadUIForm(QMainWindow):
         f.setLayout(layout)
         self.rad_select_frame = f
 
+    def init_threat_select_frame(self):
+        f = QGroupBox("威胁选择")
+
+        f.threat_button_group = QButtonGroup()
+        f.threat_button_group.setExclusive(False)
+        t1 = QCheckBox("-")
+        t2 = QCheckBox("-")
+        t3 = QCheckBox("-")
+        t4 = QCheckBox("-")
+        f.threat_button_group.addButton(t1, id=0)
+        f.threat_button_group.addButton(t2, id=1)
+        f.threat_button_group.addButton(t3, id=2)
+        f.threat_button_group.addButton(t4, id=3)
+        f.threat_button_group.buttonClicked.connect(self.on_threat_select)
+
+        layout = QGridLayout()
+        for i, b in enumerate(f.threat_button_group.buttons()):
+            b.setEnabled(False)
+            if i < 2:
+                r = 1
+                c = i + 1
+            else:
+                r = 2
+                c = i - 1
+            layout.addWidget(b, r, c)
+        f.setLayout(layout)
+        self.threat_select_frame = f
+
     def init_table_frame(self):
         f = QTableView()
         self.table_frame = f
 
     def on_radar_select(self):  # 选择雷达
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
-        self.table_frame.setModel(PandasModel(self.rad.data[rad_id]))  # 显示表格
+        # 清空数据表
+        self.table_frame.setModel(None)
+        # 重置威胁选项
+        threat_ids = list(self.rad.threats[rad_id].groups.keys())
+        for i, b in enumerate(self.threat_select_frame.threat_button_group.buttons()):
+            if i < len(threat_ids):
+                b.setText(str(threat_ids[i]))
+                b.setChecked(False)
+                b.setEnabled(True)
+            else:
+                b.setText("-")
+                b.setChecked(False)
+                b.setEnabled(False)
+        # 还原绘图设置
+        self.reset_plot_settings()
+
+    def on_threat_select(self):  # 选择威胁
+        rad_id = self.rad_select_frame.rad_button_group.checkedId()
+        threat_group = self.threat_select_frame.threat_button_group
+        checked_threats = [int(b.text()) for b in threat_group.buttons() if b.isChecked()]
+        # 显示表格
+        data = self.rad.data[rad_id]
+        self.table_frame.setModel(PandasModel(data[data["threatId"].isin(checked_threats)].reset_index(drop=True)))
         # 绘图选项启用
         for b in self.plot_setting_frame.plot_button_group.buttons():
             b.setEnabled(True)
