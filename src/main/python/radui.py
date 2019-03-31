@@ -28,7 +28,6 @@ class RadUIForm(QMainWindow):
         self.right_frame = QWidget()
 
         self.init_menu()
-        self.init_open_file_frame()
         self.init_rad_select_frame()
         self.init_table_frame()
         self.init_fit_frame()
@@ -36,7 +35,6 @@ class RadUIForm(QMainWindow):
         self.init_figure_frame()
 
         layout = QVBoxLayout()
-        layout.addWidget(self.open_file_frame)
         layout.addWidget(self.rad_select_frame)
         layout.addWidget(self.table_frame)
         layout.addWidget(self.fit_frame)
@@ -66,20 +64,6 @@ class RadUIForm(QMainWindow):
         self.setCentralWidget(self.main_frame)
         self.setAcceptDrops(True)
     
-    def init_open_file_frame(self):
-        f = QWidget()
-        f.filename_label = QLineEdit()
-        f.filename_label.setReadOnly(True)
-        f.browse_button = QPushButton("浏览...")
-        f.browse_button.clicked.connect(self.select_file)
-
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("数据文件："))
-        layout.addWidget(f.filename_label)
-        layout.addWidget(f.browse_button)
-        f.setLayout(layout)
-        self.open_file_frame = f
-    
     def select_file(self):
         dlg = QFileDialog()
         dlg.setFileMode(QFileDialog.ExistingFile)
@@ -90,7 +74,7 @@ class RadUIForm(QMainWindow):
 
     def load_file(self, filename):
         self.filename = filename
-        self.open_file_frame.filename_label.setText(self.filename)
+        self.window().setWindowTitle("RadUI - {0}".format(self.filename))
         self.rad = RDData(self.filename)  # 载入雷达数据
         # 还原所有选项
         ## 还原雷达选择
