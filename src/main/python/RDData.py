@@ -29,7 +29,6 @@ class RDData:
             rad = RDData.polar_to_cartesian(rad)
             rad = rad.reset_index(drop=True)
             self.data[rdId] = rad
-            self.threats[rdId] = rad.groupby("threatId")
 
     @staticmethod
     def polar_to_cartesian(df):

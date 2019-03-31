@@ -181,7 +181,7 @@ class RadUIForm(QMainWindow):
         # 清空数据表
         self.table_frame.setModel(None)
         # 重置威胁选项
-        threat_ids = list(self.rad.threats[rad_id].groups.keys())
+        threat_ids = list(self.rad.data[rad_id].groupby("threatId").groups.keys())
         for i, b in enumerate(self.threat_select_frame.threat_button_group.buttons()):
             if i < len(threat_ids):
                 b.setText(str(threat_ids[i]))
@@ -398,12 +398,11 @@ class RadUIForm(QMainWindow):
     def on_adv_dialog_finished(self, result):
         if result != QDialog.Accepted:
             return
-        rad_id = self.rad_select_frame.rad_button_group.checkedId()
-        data = self.rad.data[rad_id]
+        data, rad_id, checked_threats = self.current_data()
         self.adv_x = self.adv_dialog.x_axes.currentText()
         self.adv_y = self.adv_dialog.y_axes.currentText()
         self.adv_fit = self.adv_dialog.adv_fit_checkbox.isChecked()
-        if self.adv_fit and rad_id not in self.rad.fit_param:
+        if self.adv_fit:
             self.on_fit()
         self.axes = self.fig.add_subplot(111)
         self.axes.clear()
@@ -414,9 +413,9 @@ class RadUIForm(QMainWindow):
         self.axes.scatter(data[self.adv_x], data[self.adv_y], s=5)
         if self.adv_fit:
             if self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
-                self.rad.plot_fitting(self.adv_y, self.axes, rad_id)
+                self.rad.plot_fitting(self.adv_y, self.axes, rad_id, checked_threats)
             elif self.adv_x in ["x", "y", "z"] and self.adv_y in ["x", "y", "z"]:
-                self.rad.plot_fitting(self.adv_y, self.axes, rad_id, x=self.adv_x)
+                self.rad.plot_fitting(self.adv_y, self.axes, rad_id, checked_threats, x=self.adv_x)
 
         self.axes.set_title("{0} 号雷达".format(rad_id))
         self.canvas.draw()
