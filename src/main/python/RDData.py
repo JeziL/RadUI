@@ -24,11 +24,12 @@ class RDData:
         self.threats = {}
         self.fit_param = {}
         for rdId, group in self.rdGroup:
-            rad = group[group["threatId"] > 0][
+            rad = group[group["velocity"] < 0][
                 ["threatId", "Time", "radialDistance", "velocity", "azimuth", "elevation"]]
-            rad = RDData.polar_to_cartesian(rad)
-            rad = rad.reset_index(drop=True)
-            self.data[rdId] = rad
+            if len(rad.index) > 0:
+                rad = RDData.polar_to_cartesian(rad)
+                rad = rad.reset_index(drop=True)
+                self.data[rdId] = rad
 
     @staticmethod
     def polar_to_cartesian(df):
@@ -41,11 +42,11 @@ class RDData:
 
     @property
     def radar_count(self):
-        return len(self.rdGroup)
+        return len(self.data)
 
     @property
     def available_radar(self):
-        return list(self.rdGroup.groups.keys())
+        return list(self.data.keys())
 
     def info(self):
         ret = []
