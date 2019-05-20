@@ -3,7 +3,7 @@ import pandas as pd
 
 AX_LABEL = {
     "threatId":         "威胁 ID",
-    "Time":             "时间 (s)",
+    "Time":             "时间 (ms)",
     "radialDistance":   "距离 (m)",
     "velocity":         "速度 (m/s)",
     "azimuth":          "水平角 (°)",
