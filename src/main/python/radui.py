@@ -70,7 +70,7 @@ class RadUIForm(QMainWindow):
         dlg = QFileDialog()
         dlg.setFileMode(QFileDialog.ExistingFile)
         dlg.setNameFilter("雷达数据 (*.txt *.csv)")
-        dlg.setDirectory(QDir.home())
+        dlg.setDirectory("")
         if dlg.exec() and len(dlg.selectedFiles()):  # 打开文件
             self.load_file(dlg.selectedFiles()[0])
 
