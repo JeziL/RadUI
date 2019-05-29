@@ -193,6 +193,10 @@ class RadUIForm(QMainWindow):
                 b.setEnabled(False)
         # 还原绘图设置
         self.reset_plot_settings()
+        # 只有一个威胁目标，自动选中
+        if len(threat_ids) == 1:
+            self.threat_select_frame.threat_button_group.buttons()[0].setChecked(True)
+            self.on_threat_select()
 
     def on_threat_select(self):  # 选择威胁
         # 显示表格
