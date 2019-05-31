@@ -33,7 +33,7 @@ class RDData:
                  "signalLevel1", "signalLevel2", "signalToNoiseRatio1", "signalToNoiseRatio2"]]
                 rad = RDData.polar_to_cartesian(rad)
                 self.data[rdId] = rad[
-                ["threatId", "Time", "radialDistance", "velocity", "azimuth", "elevation"]]
+                ["threatId", "Time", "radialDistance", "velocity", "azimuth", "elevation", "x", "y", "z"]]
 
     @staticmethod
     def polar_to_cartesian(df):
