@@ -200,7 +200,7 @@ class RadUIForm(QMainWindow):
 
     def on_threat_select(self):  # 选择威胁
         # 显示表格
-        data, _, _ = self.current_data()
+        data, _, _ = self.current_data(raw=True)
         self.table_frame.setModel(PandasModel(data))
         # 绘图选项启用
         for b in self.plot_setting_frame.plot_button_group.buttons():
@@ -232,11 +232,14 @@ class RadUIForm(QMainWindow):
         f.setLayout(layout)
         self.fit_frame = f
 
-    def current_data(self):
+    def current_data(self, raw=False):
         rad_id = self.rad_select_frame.rad_button_group.checkedId()
         threat_group = self.threat_select_frame.threat_button_group
         checked_threats = [int(b.text()) for b in threat_group.buttons() if b.isChecked()]
-        data = self.rad.data[rad_id]
+        if not raw:
+            data = self.rad.data[rad_id]
+        else:
+            data = self.rad.raw_data[rad_id]
         return data[data["threatId"].isin(checked_threats)].reset_index(drop=True), rad_id, checked_threats
 
     def on_fit(self):  # 拟合
