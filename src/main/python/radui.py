@@ -424,6 +424,7 @@ class RadUIForm(QMainWindow):
         self.axes.set_xlabel(AX_LABEL[self.adv_x])
         self.axes.set_ylabel(AX_LABEL[self.adv_y])
         self.axes.scatter(data[self.adv_x], data[self.adv_y], s=5)
+        self.axes.grid()
         if self.adv_fit:
             if self.adv_x == "radialDistance" and self.adv_y in ["azimuth", "elevation", "x", "y", "z"]:
                 self.rad.plot_fitting(self.adv_y, self.axes, rad_id, checked_threats)
