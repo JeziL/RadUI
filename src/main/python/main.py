@@ -1,3 +1,4 @@
+import os
 import sys
 from radui import *
 from fbs_runtime.application_context import ApplicationContext
@@ -9,6 +10,8 @@ class AppContext(ApplicationContext):
         window.setWindowTitle("RadUI")
         window.resize(1920, 1080)
         window.show()
+        if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
+            window.load_file(sys.argv[1])
         return self.app.exec_()
 
 
