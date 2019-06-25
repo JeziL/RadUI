@@ -101,6 +101,7 @@ Section "Uninstall"
   RMDir /r "$InstDir"
   Delete "$SMPROGRAMS\RadUI.lnk"
   DeleteRegKey /ifempty SHCTX "Software\RadUI"
+  DeleteRegKey HKCR "*\shell\RadUI"
   DeleteRegKey SHCTX "${UNINST_KEY}"
 
 SectionEnd
