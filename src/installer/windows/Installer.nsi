@@ -37,6 +37,7 @@ FunctionEnd
 
   Name "RadUI"
   OutFile "..\RadUISetup.exe"
+  BrandingText "RadUI (c) 2019 Wang Jinli."
 
 ;--------------------------------
 ;Interface Settings
