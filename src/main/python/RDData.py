@@ -62,13 +62,13 @@ class RDData:
         self.fit_param[rad_id] = {"P": [], "TH": []}
         for i in range(3):
             self.fit_param[rad_id]["P"].append(10e5 * np.eye(2))
-            self.fit_param[rad_id]["TH"].append(np.zeros((2, 2)))
+            self.fit_param[rad_id]["TH"].append(np.zeros((2, 1)))
         data = self.data[rad_id]
         for _, d in data[data["threatId"].isin(threats)].iterrows():
             if d.radialDistance <= stop:
                 break
             ps = np.array([[d.radialDistance, 1]])
-            y_3d = [np.array([[d.x, 1]]), np.array([[d.y, 1]]), np.array([[d.z, 1]])]
+            y_3d = [d.x, d.y, d.z]
             for i in range(3):
                 y = y_3d[i]
                 ll = 1 / r * np.dot(self.fit_param[rad_id]["P"][i], ps.T) * np.linalg.inv(
