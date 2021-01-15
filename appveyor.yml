@@ -1,11 +1,11 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 init:
-  - cmd: set PATH=C:\Python36-x64;C:\Python36-x64\Scripts;%PATH%
+  - cmd: set PATH=C:\Python39-x64;C:\Python39-x64\Scripts;%PATH%
 
 install:
   - cmd: pip install -r requirements.txt
-  - cmd: pip install pywin32==224
+  - cmd: pip install pywin32==300
 
 build_script:
   - cmd: fbs freeze

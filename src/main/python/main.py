@@ -1,7 +1,7 @@
 import os
 import sys
 from radui import *
-from fbs_runtime.application_context import ApplicationContext
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 
 class AppContext(ApplicationContext):

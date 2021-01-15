@@ -29,7 +29,7 @@ class PandasModel(QAbstractTableModel):
         if not index.isValid():
             return QVariant()
 
-        return QVariant(str(self._df.ix[index.row(), index.column()]))
+        return QVariant(str(self._df.iloc[index.row(), index.column()]))
 
     def rowCount(self, parent=QModelIndex(), *args, **kwargs):
         return len(self._df.index)
