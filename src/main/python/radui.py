@@ -36,6 +36,10 @@ class RadUIForm(QMainWindow):
         self.init_figure_frame()
 
         layout = QVBoxLayout()
+        self.filter_box = QCheckBox("过滤飞离平台目标")
+        self.filter_box.setChecked(True)
+        self.filter_box.clicked.connect(self.on_filter_changed)
+        layout.addWidget(self.filter_box)
         layout.addWidget(self.rad_select_frame)
         layout.addWidget(self.threat_select_frame)
         layout.addWidget(self.table_frame)
@@ -87,10 +91,15 @@ class RadUIForm(QMainWindow):
         # 清空图象
         self.fig.clear()
 
+    def on_filter_changed(self):
+        if self.filename:
+            self.load_file(self.filename)
+
     def load_file(self, filename):
         self.filename = filename
+        filter_vel = self.filter_box.isChecked()
         self.window().setWindowTitle("RadUI - {0}".format(self.filename))
-        self.rad = RDData(self.filename)  # 载入雷达数据
+        self.rad = RDData(self.filename, filter_vel)  # 载入雷达数据
         # 还原所有选项
         ## 还原雷达选择
         self.rad_select_frame.rad_button_group.setExclusive(False)

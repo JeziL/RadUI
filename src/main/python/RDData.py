@@ -15,7 +15,7 @@ AX_LABEL = {
 
 
 class RDData:
-    def __init__(self, filename):
+    def __init__(self, filename, filter_vel=True):
         pd.set_option("mode.chained_assignment", None)
         with open(filename, "r") as f:
             self.df = pd.read_csv(f, sep="\t")
@@ -25,7 +25,10 @@ class RDData:
         self.threats = {}
         self.fit_param = {}
         for rdId, group in self.rdGroup:
-            rad = group[group["velocity"] < 0]
+            if filter_vel:
+                rad = group[group["velocity"] < 0]
+            else:
+                rad = group
             if len(rad.index) > 0:
                 rad = rad.reset_index(drop=True)
                 self.raw_data[rdId] = rad[
