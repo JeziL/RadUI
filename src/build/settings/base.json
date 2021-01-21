@@ -2,5 +2,5 @@
     "app_name": "RadUI",
     "author": "Wang Jinli",
     "main_module": "src/main/python/main.py",
-    "version": "0.11.6"
+    "version": "0.11.7"
 }
